@@ -10,7 +10,7 @@ class WebPage extends StatefulWidget {
   WebPage(this.url);
 }
 
-class _WebPageState extends State<WebPage> {
+class _WebPageState extends State<WebPage> with AutomaticKeepAliveClientMixin {
   WebViewController _webViewController;
 
   String myurl;
@@ -22,9 +22,9 @@ class _WebPageState extends State<WebPage> {
   void initState(){
 
     myurl=widget.url;
-    setState(() {
 
-    });
+
+
   }
   Future<String> getCountryData() async {
     setState(() {
@@ -60,7 +60,12 @@ class _WebPageState extends State<WebPage> {
                     key: _key,
                     initialUrl: myurl,
                     javascriptMode: JavascriptMode.unrestricted,
-                    onPageFinished: (webhight){
+                    onPageFinished: (webhight) async {
+                      webViewHeight = double.tryParse(
+                          await _webViewController
+                          .evaluateJavascript("document.documentElement.scrollHeight;"),
+                      );
+                      print(webViewHeight);
                       setState(() {
                         isLoading = false;
                       });
@@ -68,9 +73,17 @@ class _WebPageState extends State<WebPage> {
                     },
 
                   ),
-                  isLoading ? Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Center( child: CircularProgressIndicator(),)],
+                  isLoading ? Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(child: CircularProgressIndicator())
+                      ],
+                    ),
                   )
                       : Stack(),
                 ],
@@ -81,4 +94,7 @@ class _WebPageState extends State<WebPage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

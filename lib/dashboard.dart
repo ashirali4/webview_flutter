@@ -13,48 +13,60 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   int _currentIndex = 0;
-  int _counter = 0;
-  List<Widget> mypage=[
-    WebPage('https://maroismasso.com/staff-news'),
-    WebPage2('https://maroismasso.com/achats/solde-staff'),
-    WebPage3('https://maroismasso.com/wp-admin/admin.php?page=latepoint'),
-    WebPage4('https://maroismasso.com/staff-connexion/'),
-    WebPage5('https://maroismasso.com/questions/sujet/staff/'),
+  List<Widget> _children;
 
-
-  ];
-  void _incrementCounter() {
+  // add
+  final pageController = PageController();
+  void onPageChanged(int index) {
     setState(() {
-      _counter++;
+      _currentIndex = index;
     });
   }
+
+  @override
+  void initState() {
+    super.initState();
+    _children = [ WebPage('https://maroismasso.com/staff-news'),
+      WebPage2('https://maroismasso.com/achats/solde-staff'),
+      WebPage3('https://maroismasso.com/wp-admin/admin.php?page=latepoint'),
+      WebPage4('https://maroismasso.com/staff-connexion/'),
+      WebPage5('https://maroismasso.com/questions/sujet/staff/'),];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Center(child: Text("Maroismasso"))),
-      body: mypage[_currentIndex],
+      body: IndexedStack(
+          index:_currentIndex,
+          children:_children
+      ),
       bottomNavigationBar: BottomNavyBar(
       selectedIndex: _currentIndex,
       showElevation: true,
       itemCornerRadius: 24,
       curve: Curves.easeIn,
-      onItemSelected: (index) => setState(() => _currentIndex = index),
+      onItemSelected: (index) {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
       items: <BottomNavyBarItem>[
         BottomNavyBarItem(
           icon: Icon(Icons.list_alt_outlined),
-          title: Text('News'),
+          title: Text('Nouvelles'),
           activeColor: Colors.blue,
           textAlign: TextAlign.center,
         ),
         BottomNavyBarItem(
           icon: Icon(Icons.card_giftcard),
-          title: Text('Gift Cards'),
+          title: Text('Cartes cadeaux'),
           activeColor: Colors.blue,
           textAlign: TextAlign.center,
         ),
         BottomNavyBarItem(
           icon: Icon(Icons.calendar_today_outlined),
-          title: Text('Calendar'),
+          title: Text('Horraire'),
           activeColor: Colors.blue,
           textAlign: TextAlign.center,
         ),
@@ -68,7 +80,7 @@ class _DashboardState extends State<Dashboard> {
         ),
         BottomNavyBarItem(
           icon: Icon(Icons.question_answer_outlined),
-          title: Text('FAQ\'s'),
+          title: Text('Aide'),
           activeColor: Colors.blue,
           textAlign: TextAlign.center,
         ),
